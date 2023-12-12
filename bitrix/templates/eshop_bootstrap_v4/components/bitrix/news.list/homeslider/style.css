@@ -1,0 +1,135 @@
+
+.homeslider {
+  margin-top: 30px;
+}
+.homeslider .slick-dots {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 20px 0 0;
+}
+.homeslider .slick-dots li {
+  margin: 0 5px;
+}
+.homeslider .slick-dots li button {
+  font-size: 0;
+  padding: 0;
+  border: none;
+  background: var(--accent);
+  width: 20px;
+  height: 7px;
+  opacity: .3;
+  transition: .5s ease-in-out;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.homeslider .slick-dots li.slick-active button {
+  width: 60px;
+}
+.homeslider .slick-dots li button:hover {
+  opacity: 1;
+}
+.homeslider__slide {
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+}
+.homeslider__text {
+  padding: 40px 70px 110px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-size: 16px;
+  color: #fff;
+  z-index: 3;
+}
+.homeslider__img {
+  background-position: center;
+}
+.homeslider__title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: .8em;
+}
+.homeslider__text .btn {
+  position: absolute;
+  bottom: 50px;
+  left: 70px;
+  width: auto;
+  padding: 0 20px;
+  background: transparent;
+  border: 2px solid #fff;
+  box-shadow: none !important;
+}
+.homeslider__text ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.homeslider__text ul li {
+  margin-top: .8em;
+  position: relative;
+}
+
+@media (max-width: 960px) {
+  .homeslider__text {
+    height: 300px;
+    padding: 20px 30px 80px;
+    font-size: 14px;
+  }
+  .homeslider__title {
+    font-size: 21px;
+  }
+  .homeslider__text .btn {
+    left: 30px;
+    bottom: 30px;
+  }
+}
+@media (max-width: 767px) {
+  .homeslider {
+    margin-top: 20px;
+  }
+  .homeslider__slide {
+    display: flex !important;
+    flex-direction: column-reverse;
+    position: relative;
+  }
+  .homeslider__slide::after {
+    content: '';
+    background: inherit;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: .9;
+  }
+  .homeslider__title {
+    font-size: 24px;
+  }
+  .homeslider__text {
+    padding: 20px 30px;
+    font-size: 16px;
+  }
+  .homeslider__text br {
+    display: none;
+  }
+  .homeslider__text .btn {
+    position: static;
+    margin-top: 30px;
+    display: inline-flex;
+  }
+  .homeslider__img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+}
+
+/* background: url("../../../../img/icons/arrow.svg");  */

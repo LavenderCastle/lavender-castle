@@ -1,0 +1,202 @@
+{
+  "template-color": "#373f89",
+  "template-background-show": false,
+  "template-background-color": "#c8c8cd",
+  "template-font": "Montserrat",
+  "template-images-effect": "opacity",
+  "template-images-lazyload-use": true,
+  "template-titles-size": 30,
+  "template-text-size": 14,
+  "template-width": 1344,
+  "template-menu-show": true,
+  "template-cache": true,
+  "base-regionality-use": true,
+  "base-consent": true,
+  "base-map-vendor": "yandex",
+  "base-search-mode": "catalog",
+  "basket-use": true,
+  "basket-delay-use": true,
+  "basket-compare-use": true,
+  "basket-position": "header",
+  "basket-fixed-template": "template.2",
+  "basket-fixed-auto": false,
+  "basket-notifications-use": true,
+  "catalog-detail-gallery-modes": [
+    "zoom",
+    "popup"
+  ],
+  "catalog-detail-sku-view": "dynamic",
+  "catalog-detail-sizes-show": false,
+  "catalog-detail-information-shipment-show": true,
+  "catalog-detail-information-payment-show": true,
+  "catalog-products-view-mode": "text",
+  "catalog-menu-view": "simple.1",
+  "catalog-quick-view-use": true,
+  "catalog-quick-view-detail": false,
+  "catalog-detail-panel-show": true,
+  "catalog-detail-panel-mobile-show": true,
+  "catalog-root-menu-show": false,
+  "catalog-sections-menu-show": false,
+  "catalog-detail-menu-show": false,
+  "catalog-delivery-calculation-use": true,
+  "catalog-recalculation-price-use": true,
+  "catalog-form-cheaper-show": true,
+  "catalog-root-layout": "2",
+  "catalog-root-template": "tile.5",
+  "catalog-sections-layout": "2",
+  "catalog-sections-template": "tile.1",
+  "catalog-filter-ajax": true,
+  "catalog-filter-template": "horizontal.2",
+  "catalog-elements-text-template": "text.2",
+  "catalog-elements-list-template": "list.2",
+  "catalog-elements-tile-template": "tile.4.columns.4",
+  "catalog-elements-tile-image-aspect-ratio": "1:1",
+  "catalog-elements-tile-mobile-columns": 2,
+  "catalog-detail-template": "default.4.tabs.top",
+  "catalog-quick-view-template": 2,
+  "footer-blocks": {
+    "form": {
+      "active": true,
+      "template": "wide.1"
+    },
+    "contacts": {
+      "active": false,
+      "template": "wide.1"
+    }
+  },
+  "footer-theme": "light",
+  "footer-products-viewed-show": true,
+  "footer-template": 4,
+  "header-basket-popup-show": true,
+  "header-template": 19,
+  "header-menu-uppercase-use": false,
+  "header-menu-overlay-use": true,
+  "header-fixed-use": true,
+  "header-fixed-menu-popup-show": true,
+  "header-menu-popup-template": 4,
+  "header-mobile-template": "white",
+  "header-mobile-fixed": true,
+  "header-mobile-hidden": true,
+  "header-mobile-search-type": "popup",
+  "header-mobile-menu-template": 3,
+  "pages-main-template": "wide",
+  "pages-main-blocks": {
+    "banner": {
+      "active": true,
+      "template": 12
+    },
+    "icons": {
+      "active": false,
+      "template": null
+    },
+    "sections": {
+      "active": true,
+      "template": "list.1"
+    },
+    "categories": {
+      "active": true,
+      "template": "tiles.8"
+    },
+    "gallery": {
+      "active": false,
+      "template": "tiles.1"
+    },
+    "products": {
+      "active": true,
+      "template": "tiles.3.big"
+    },
+    "reviews": {
+      "active": true,
+      "template": "slider.9"
+    },
+    "services": {
+      "active": true,
+      "template": "tiles.6"
+    },
+    "video": {
+      "active": false,
+      "template": "wide.1"
+    },
+    "advantages": {
+      "active": true,
+      "template": "icons.2"
+    },
+    "projects": {
+      "active": false,
+      "template": "tiles.1"
+    },
+    "staff": {
+      "active": false,
+      "template": "tiles.1"
+    },
+    "faq": {
+      "active": false,
+      "template": "wide.1"
+    },
+    "stages": {
+      "active": false,
+      "template": "tiles.2"
+    },
+    "certificates": {
+      "active": false,
+      "template": "tiles.1"
+    },
+    "news": {
+      "active": true,
+      "template": "blocks.1"
+    },
+    "shares": {
+      "active": true,
+      "template": "tiles.1"
+    },
+    "about": {
+      "active": true,
+      "template": "block.2"
+    },
+    "brands": {
+      "active": true,
+      "template": "slider.2"
+    },
+    "articles": {
+      "active": false,
+      "template": "tiles.2"
+    },
+    "rates": {
+      "active": false,
+      "template": "tiles.1"
+    },
+    "videos": {
+      "active": true,
+      "template": "list.1"
+    },
+    "contacts": {
+      "active": true,
+      "template": "list.1"
+    }
+  },
+  "sections-shares-template": "blocks.2",
+  "sections-staff-template": "blocks.1",
+  "sections-contacts-template": "offices.1",
+  "sections-news-template": "list.1",
+  "sections-articles-template": "blocks.1",
+  "sections-brands-template": "list.1",
+  "sections-brands-filter-use": true,
+  "sections-brands-sections-show": true,
+  "sections-brands-products-show": true,
+  "sections-jobs-template": "list.1",
+  "sections-certificates-template": "tiles.1",
+  "services-root-menu-show": false,
+  "services-root-sections-template": 13,
+  "services-root-list-template": 1,
+  "services-children-menu-show": true,
+  "services-children-sections-template": 1,
+  "services-children-list-template": 11,
+  "services-element-template": "wide.1",
+  "mobile-blocks": {
+    "panel": {
+      "active": true,
+      "template": "template.1"
+    }
+  },
+  "mobile-panel-hidden": true
+}
