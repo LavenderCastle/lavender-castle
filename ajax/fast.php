@@ -43,17 +43,15 @@ if ($item != '') {
       ],
       'select' => ['ID']
     ], $bitrix24Webhook);
-
     $product_id = $products[0]['ID'];
 
     $lead_id = sendLead([
       "fields" => [
-        "TITLE" => $subject,
+        "TITLE" => $subject.$lead_id,
         "NAME"  => $name,
         "PHONE" => [["VALUE" => $phone, "VALUE_TYPE" => "WORK"]],
       ]
     ], $bitrix24Webhook);
-
     $contact_id = getContact([
       "ORDER"  => ["ID" => 'DESC'],
       "FILTER" => ['PHONE' => $phone],
@@ -65,6 +63,13 @@ if ($item != '') {
       "ORDER"  => ["ID" => 'DESC'],
       "FILTER" => ['CONTACT_ID' => $contact_id[0]],
       "SELECT" => ['ID'],
+    ], $bitrix24Webhook);
+
+    $update_deal = updateDeal([
+      "id"=>$deal_id[0]['ID'],
+      "fields" => [
+        "TITLE" => $subject.'№'.$deal_id[0]['ID'],
+      ]
     ], $bitrix24Webhook);
 
     $set_product = setProductsToLead([
@@ -332,6 +337,32 @@ function getProducts($params, $bitrix24Webhook)
     return "Ошибка при привязке товара к лида: " . $result["error"] . ": " . $result["error_description"];
   }
 }
+function updateDeal($params, $bitrix24Webhook)
+{
+  $queryURL  = $bitrix24Webhook . "crm.deal.update";
+  $queryData = http_build_query($params);
 
+  $curl = curl_init();
+  curl_setopt_array(
+    $curl,
+    array(
+      CURLOPT_SSL_VERIFYPEER => 0,
+      CURLOPT_POST           => 1,
+      CURLOPT_HEADER         => 0,
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_URL            => $queryURL,
+      CURLOPT_POSTFIELDS     => $queryData,
+    )
+  );
+  $result = curl_exec($curl);
+  curl_close($curl);
+  $result = json_decode($result, 1);
+
+  if (empty($result["error"])) {
+    return $result["result"];
+  } else {
+    return "Ошибка при создании лида " . $result["error"] . ": " . $result["error_description"];
+  }
+}
 
 ?>

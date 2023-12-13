@@ -109,6 +109,7 @@ else
 
 $skuProps = array();
 $price = $actualItem['ITEM_PRICES'][$actualItem['ITEM_PRICE_SELECTED']];
+$iduniq=$actualItem['ID'];
 $measureRatio = $actualItem['ITEM_MEASURE_RATIOS'][$actualItem['ITEM_MEASURE_RATIO_SELECTED']]['RATIO'];
 $showDiscount = $price['PERCENT'] > 0;
 
@@ -301,6 +302,7 @@ endif;
 
 								<div class="element__info">
                     <h1 class="element__name"><?=$name?></h1>
+										<span class="element__name"><?=$iduniq?></span>
 										<?if ($actualItem['ACTIVE']!='N'):?>
 										<div class="element__panel">
 												<div class="element__price">
