@@ -5,14 +5,13 @@
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
-
 $name       = $_POST['name'];
 $phone      = $_POST['phone'];
 $subject    = $_POST['subject'];
 $item       = $_POST['item'];
 $sendto     = 'hello@lavendercastle.ru';
 $product_id = $_POST['product_id'];
-
+$delimiter  = "%0A";
 
 $request_uri = explode('/', $item);
 
@@ -21,7 +20,6 @@ $slug = null;
 if (isset($request_uri[array_key_last($request_uri) - 1])) {
   $slug = $request_uri[array_key_last($request_uri) - 1];
 }
-
 
 if ($item != '') {
   $content = '
@@ -36,18 +34,65 @@ if ($item != '') {
 
 
   if ($slug) {
-    $products = getProducts([
-      "order" => ['SORT' => 'DESC'],
+    $products   = getProducts([
+      "order"  => ['SORT' => 'DESC'],
       'filter' => [
-        "ID" => 7968
+        "CODE" => $slug,
       ],
-      'select' => ['ID']
+      'select' => ['ID', 'NAME', 'PRICE', 'CURRENCY_ID']
     ], $bitrix24Webhook);
     $product_id = $products[0]['ID'];
 
-    $lead_id = sendLead([
+    $deal_id = getDeal([
+      "ORDER"  => ["ID" => 'DESC'],
+      "FILTER" => ['CONTACT_ID' => $contact_id[0]],
+      "SELECT" => ['ID', 'OPPORTUNITY'],
+    ], $bitrix24Webhook);
+
+ 
+      $prop_common = CIBlockElement::GetByID($product_id);
+      $prop        = null;
+        
+      if ($ob = $prop_common->GetNextElement()) {
+        $prop = $ob->GetProperties();
+      }
+      $param_string = '';
+      $sku = '';
+        if (!is_null($prop)) {
+          $sku = $prop['CML2_ARTICLE']['VALUE'];
+        }
+      if(isset($prop['CONTAIN']['VALUE'])){
+        $parameters = $prop['CONTAIN']['VALUE'];
+        foreach($parameters as $parameter){
+            $param_string .=  getParameterId($parameter)." / ";
+        }
+      }
+    
+      $width                           = $prop['WIDTH']['NAME'] . ': ' . $prop['WIDTH']['VALUE'];
+      $height                          = $prop['HEIGHT']['NAME'] . ': ' . $prop['HEIGHT']['VALUE'];
+      $tgcontent_content_item_name     = $products[0]['NAME'];
+      $tgcontent_content_item_price    = $products[0]['PRICE'];
+      $tgcontent_content_item_currency = $products[0]['CURRENCY_ID'];
+      $order                           = 'Новый заказ' . " " . "№" . $deal_id[0]['ID'];
+      $tgcontent                       = $order . $delimiter . $item . $delimiter;
+      $tgcontent .= "Пользователь:" . $name . $delimiter . 'Номер телефона:' . $phone . $delimiter . $tgcontent_content_item_name . ' ' . '-' . " " . $tgcontent_content_item_price . " " . $tgcontent_content_item_currency . $delimiter;
+      $tgcontent .= $delimiter . $width;
+      $tgcontent .= $delimiter . $height;
+      $tgcontent .= $delimiter . "Цветы в составе:" ." ". $param_string;
+      urlencode($tgcontent);
+      $token   = '1624880439:AAGDgOb-dqC1dnRThf1BbTq62H28yOZD70U';
+      $chat_id = '-542975461';
+      //Передаем данные боту
+      try {
+        $sendToTelegram = file_get_contents("https://api.telegram.org/bot{$token}/sendMessage?chat_id={$chat_id}&parse_mode=html&text={$tgcontent}");
+      } catch(Exception $e) {
+        //
+      }
+
+
+    $lead_id    = sendLead([
       "fields" => [
-        "TITLE" => $subject.$lead_id,
+        "TITLE" => $subject . $lead_id,
         "NAME"  => $name,
         "PHONE" => [["VALUE" => $phone, "VALUE_TYPE" => "WORK"]],
       ]
@@ -59,16 +104,10 @@ if ($item != '') {
     ], $bitrix24Webhook);
 
 
-    $deal_id = getDeal([
-      "ORDER"  => ["ID" => 'DESC'],
-      "FILTER" => ['CONTACT_ID' => $contact_id[0]],
-      "SELECT" => ['ID'],
-    ], $bitrix24Webhook);
-
     $update_deal = updateDeal([
-      "id"=>$deal_id[0]['ID'],
+      "id"     => $deal_id[0]['ID'],
       "fields" => [
-        "TITLE" => $subject.'№'.$deal_id[0]['ID'],
+        "TITLE" => $subject . '№' . $deal_id[0]['ID'],
       ]
     ], $bitrix24Webhook);
 
@@ -80,6 +119,8 @@ if ($item != '') {
         ]
       ]
     ], $bitrix24Webhook);
+
+
   }
 } else {
   $content = '
@@ -91,10 +132,6 @@ if ($item != '') {
 
 if ($phone != '') {
 
-  $token   = '1624880439:AAGDgOb-dqC1dnRThf1BbTq62H28yOZD70U';
-  $chat_id = '-542975461';
-  //Передаем данные боту
-  $sendToTelegram = fopen("https://api.telegram.org/bot{$token}/sendMessage?chat_id={$chat_id}&parse_mode=html&text={$content}", "r");
 
   date_default_timezone_set('Etc/UTC');
 
@@ -217,7 +254,6 @@ function setProductsToLead($params, $bitrix24Webhook)
   if (empty($result["error"]) && isset($result["result"])) {
     return $result["result"];
   } else {
-    // print_r($result);
     return "Ошибка при привязке товара к лида: " . $result["error"] . ": " . $result["error_description"];
   }
 }
@@ -243,7 +279,6 @@ function getDeal($params, $bitrix24Webhook)
   $result = json_decode($result, 1);
 
   if (empty($result["error"])) {
-    // print_r($result);
     return ($result['result']);
   } else {
     return "Ошибка при привязке товара к лида: " . $result["error"] . ": " . $result["error_description"];
@@ -300,7 +335,6 @@ function getContact($params, $bitrix24Webhook)
   $result = json_decode($result, 1);
 
   if (empty($result["error"])) {
-    // print_r(($result));
     return $result["result"];
   } else {
     return "Ошибка при привязке товара к лида: " . $result["error"] . ": " . $result["error_description"];
@@ -331,7 +365,6 @@ function getProducts($params, $bitrix24Webhook)
   $result = json_decode($result, 1);
 
   if (empty($result["error"])) {
-    // print_r(($result));
     return $result["result"];
   } else {
     return "Ошибка при привязке товара к лида: " . $result["error"] . ": " . $result["error_description"];
@@ -364,5 +397,12 @@ function updateDeal($params, $bitrix24Webhook)
     return "Ошибка при создании лида " . $result["error"] . ": " . $result["error_description"];
   }
 }
-
+function getParameterId($id){
+        global $DB;
+        $results = $DB->Query("SELECT * FROM b_iblock_element WHERE ID = $id");
+        if ($row = $results->Fetch())
+        {
+          return($row['NAME']);
+        } 
+}
 ?>

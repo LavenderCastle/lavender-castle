@@ -2,36 +2,86 @@
 
 //\Bitrix\Main\Loader::includeModule('shestpa.lastmodified');
 
-//include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/wsrubi.smtp/classes/general/wsrubismtp.php");
-include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/basketplus/classes/basket.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/wsrubi.smtp/classes/general/wsrubismtp.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/basketplus/classes/basket.php");
 
 AddEventHandler('main', 'OnAdminContextMenuShow', 'ElementDetailAdminContextMenuShow');
 
-function ElementDetailAdminContextMenuShow(&$items){
- if ($_SERVER['REQUEST_METHOD']=='GET' && $GLOBALS['APPLICATION']->GetCurPage()=='/bitrix/admin/iblock_element_edit.php' && $_REQUEST['ID']>0)
-    {
-        CModule::IncludeModule('iblock');
-        $rsElement = CIBlockElement::GetList(
-            $arOrder  = array("ID" => "ASC"),
-            $arFilter = array(
-                "=IBLOCK_ID" => $_REQUEST['IBLOCK_ID'],
-                "=ID" => $_REQUEST['ID'],
-            ),
-            false,
-            false,
-            $arSelectFields = array("ID", "NAME", "IBLOCK_ID", "CODE", "DETAIL_PAGE_URL")
-        );
-        if($arElement = $rsElement->GetNext(true, false)):
-            $items[] = array(
-                "TEXT"  => "Открыть страницу элемента",
-                "LINK"  => $arElement['DETAIL_PAGE_URL'],
-                'LINK_PARAM' => 'target=_blank',
-                "TITLE" => "Открыть страницу элемента",
-                "ICON"  => "adm-btn",
-            );
-        endif;
-        }
+function ElementDetailAdminContextMenuShow(&$items)
+{
+  if ($_SERVER['REQUEST_METHOD'] == 'GET' && $GLOBALS['APPLICATION']->GetCurPage() == '/bitrix/admin/iblock_element_edit.php' && $_REQUEST['ID'] > 0) {
+    CModule::IncludeModule('iblock');
+    $rsElement = CIBlockElement::GetList(
+      $arOrder = array("ID" => "ASC"),
+      $arFilter = array(
+        "=IBLOCK_ID" => $_REQUEST['IBLOCK_ID'],
+        "=ID"        => $_REQUEST['ID'],
+      ),
+      false,
+      false,
+      $arSelectFields = array("ID", "NAME", "IBLOCK_ID", "CODE", "DETAIL_PAGE_URL")
+    );
+    if ($arElement = $rsElement->GetNext(true, false)):
+      $items[] = array(
+        "TEXT"       => "Открыть страницу элемента",
+        "LINK"       => $arElement['DETAIL_PAGE_URL'],
+        'LINK_PARAM' => 'target=_blank',
+        "TITLE"      => "Открыть страницу элемента",
+        "ICON"       => "adm-btn",
+      );
+    endif;
+  }
 }
+
+
+$eventManager = \Bitrix\Main\EventManager::getInstance();
+
+$eventManager->AddEventHandler(
+  'sale',
+  'OnSaleOrderBeforeSaved',
+  'onOrderSave'
+);
+
+
+function onOrderSave(\Bitrix\Main\Event $event)
+{
+  // получим объект заказа
+  $order = $event->getParameter("ENTITY");
+
+  $propertyCollection = $order->getPropertyCollection();
+
+  $delivery = '';
+
+  /** @var \Bitrix\Sale\PropertyValue $obProp */
+  foreach ($propertyCollection as $obProp) {
+    $arProp = $obProp->getProperty();
+    if (!in_array($arProp["CODE"], ["FROM"])) {
+      continue;
+    }
+    $delivery .= $obProp->getValue();
+  }
+
+
+  /** @var \Bitrix\Sale\PropertyValue $obProp */
+  foreach ($propertyCollection as $obProp) {
+    $arProp = $obProp->getProperty();
+    if (!in_array($arProp["CODE"], ["TO"])) {
+      continue;
+    }
+    $delivery .= ' - ' . $obProp->getValue();
+  }
+
+  foreach ($propertyCollection as $obProp) {
+    $arProp = $obProp->getProperty();
+    if (!in_array($arProp["CODE"], ["DELIVERYDATE"])) {
+      continue;
+    }
+    
+    $obProp->setValue($delivery);
+  }
+}
+
+
 
 /*
 AddEventHandler("main", "OnAfterUserAdd", "OnAfterUserRegisterHandler");
@@ -49,11 +99,14 @@ function OnAfterUserRegisterHandler(&$arFields){
   return $arFields;
 }
 */
- AddEventHandler("main", "OnEndBufferContent", "myfunction");
+AddEventHandler("main", "OnEndBufferContent", "myfunction");
 
-   function myfunction(&$content)
-   {
-global $USER, $APPLICATION;
-if (($APPLICATION->GetCurDir() == '/bitrix/' || $APPLICATION->GetCurDir() == '/bitrix/admin/') &&  !$USER->IsAuthorized()) { LocalRedirect("/404.php"); }
+function myfunction(&$content)
+{
+  global $USER, $APPLICATION;
+  if (($APPLICATION->GetCurDir() == '/bitrix/' || $APPLICATION->GetCurDir() == '/bitrix/admin/') && !$USER->IsAuthorized()) {
+    LocalRedirect("/404.php");
   }
+}
+
 ?>

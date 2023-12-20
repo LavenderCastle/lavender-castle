@@ -302,7 +302,7 @@ endif;
 
 								<div class="element__info">
                     <h1 class="element__name"><?=$name?></h1>
-										<span class="element__name"><?=$iduniq?></span>
+										<span class="element__name" style="font-size: 10px;">ID <?=$iduniq?></span>
 										<?if ($actualItem['ACTIVE']!='N'):?>
 										<div class="element__panel">
 												<div class="element__price">

@@ -5,7 +5,7 @@ define("NEED_AUTH", true);
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 global $USER;
 if ($_POST['email']!='') {
-
+  
   // Ищем пользователя по email
 
   $cUser = $USER::GetList(
@@ -32,7 +32,74 @@ if ($_POST['email']!='') {
 
     // отправляем e-mail
 	global $USER;
+
+
+
+
+    $sendto = $_POST['email'];
+    $content = $authLink;
+  
+    require 'mailer/PHPMailerAutoload.php';
+    //Create a new PHPMailer instance
+    $mail          = new PHPMailer;
+    $mail->CharSet = 'utf-8';
+
+    //Tell PHPMailer to use SMTP
+    $mail->isSMTP();
+
+    //Enable SMTP debugging
+    // 0 = off (for production use)
+    // 1 = client messages
+    // 2 = client and server messages
+    $mail->SMTPDebug = 0;
+
+    //Ask for HTML-friendly debug output
+    $mail->Debugoutput = 'html';
+
+    $mail->Host        = 'smtp.mail.ru';
+    $mail->Port        = 465;
+    $mail->SMTPAuth    = true;
+    $mail->SMTPSecure  = 'ssl';
+    $mail->SMTPOptions = array(
+      'ssl' => array(
+        'verify_peer'       => false,
+        'verify_peer_name'  => false,
+        'allow_self_signed' => true
+      )
+    );
+
+    //Username to use for SMTP authentication - use full email address for gmail
+    $mail->Username = "nfs2025@mail.ru";
+
+    //Password to use for SMTP authentication
+    $mail->Password = "W1s9LGQUERwFS0fXpz66";
+
+    //Set who the message is to be sent from
+    $mail->setFrom("nfs2025@mail.ru", 'Лавандовый Замок');
+    $mail->AddReplyTo("nfs2025@mail.ru", 'Лавандовый Замок');
+    //Set who the message is to be sent to
+    $mail->addAddress($sendto, 'Лавандовый Замок');
+    // $mail->addAddress('korotychm@hotmail.com', 'Михаил Коротыч');
+
+    //Set the subject line
+    $mail->Subject = $subject;
+
+    //convert HTML into a basic plain-text alternative body
+    $mail->msgHTML($content);
+
+    //Replace the plain text body with one created manually
+    $mail->AltBody = $altcontent;
+
+
+    //send the message, check for errors
+    if (!$mail->send()) {
+      print_r('Произошла ошибка!');
+      die();
+    } else {
+      // echo '<div class="header__popup-success">Спасибо! Мы получили вашу заявку и свяжемся с вами в самое ближайшее время.</div>';
+    }
     $arResult = $USER->SendPassword($cUser['LOGIN'], $_POST['email']);
+
     if($arResult["TYPE"] == "OK")  echo '<div class="header__popup-success">Перейдите по ссылке в письме и поменяйте пароль в личном кабинете.</div>';
     else echo '<div class="header__popup-error">Пользователь с таким E-mail не найден</div>';
 

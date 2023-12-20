@@ -1,17 +1,3 @@
-<? if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
-use \Bitrix\Main;
-/**
- * @global CMain $APPLICATION
- * @var array $arParams
- * @var array $arResult
- * @var CatalogProductsViewedComponent $component
- * @var CBitrixComponentTemplate $this
- * @var string $templateName
- * @var string $componentPath
- * @var string $templateFolder
- */
-?>
 
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?
@@ -79,7 +65,7 @@ if (!$USER->IsAuthorized()):
           <form id="fast-form">
             <input type="hidden" name="subject" id="form-subject" />
             <input type="hidden" name="item" id="form-item" />
-	        <input type="hidden" name="product_id" id="form-product_id" value="<?php echo htmlspecialchars($arResult['ID']); ?>">
+	        <input type="hidden" name="product_id" id="form-product_id" >
             <input type="text" required placeholder="Ваше имя" name="name" />
             <input class="phoneinput" required type="text" placeholder="Ваш телефон" name="phone" />
             <button class="btn">Отправить</button>
