@@ -41,55 +41,9 @@ if ($item != '') {
       ],
       'select' => ['ID', 'NAME', 'PRICE', 'CURRENCY_ID']
     ], $bitrix24Webhook);
+
     $product_id = $products[0]['ID'];
-
-    $deal_id = getDeal([
-      "ORDER"  => ["ID" => 'DESC'],
-      "FILTER" => ['CONTACT_ID' => $contact_id[0]],
-      "SELECT" => ['ID', 'OPPORTUNITY'],
-    ], $bitrix24Webhook);
-
- 
-      $prop_common = CIBlockElement::GetByID($product_id);
-      $prop        = null;
-        
-      if ($ob = $prop_common->GetNextElement()) {
-        $prop = $ob->GetProperties();
-      }
-      $param_string = '';
-      $sku = '';
-        if (!is_null($prop)) {
-          $sku = $prop['CML2_ARTICLE']['VALUE'];
-        }
-      if(isset($prop['CONTAIN']['VALUE'])){
-        $parameters = $prop['CONTAIN']['VALUE'];
-        foreach($parameters as $parameter){
-            $param_string .=  getParameterId($parameter)." / ";
-        }
-      }
-    
-      $width                           = $prop['WIDTH']['NAME'] . ': ' . $prop['WIDTH']['VALUE'];
-      $height                          = $prop['HEIGHT']['NAME'] . ': ' . $prop['HEIGHT']['VALUE'];
-      $tgcontent_content_item_name     = $products[0]['NAME'];
-      $tgcontent_content_item_price    = $products[0]['PRICE'];
-      $tgcontent_content_item_currency = $products[0]['CURRENCY_ID'];
-      $order                           = 'Новый заказ' . " " . "№" . $deal_id[0]['ID'];
-      $tgcontent                       = $order . $delimiter . $item . $delimiter;
-      $tgcontent .= "Пользователь:" . $name . $delimiter . 'Номер телефона:' . $phone . $delimiter . $tgcontent_content_item_name . ' ' . '-' . " " . $tgcontent_content_item_price . " " . $tgcontent_content_item_currency . $delimiter;
-      $tgcontent .= $delimiter . $width;
-      $tgcontent .= $delimiter . $height;
-      $tgcontent .= $delimiter . "Цветы в составе:" ." ". $param_string;
-      urlencode($tgcontent);
-      $token   = '1624880439:AAGDgOb-dqC1dnRThf1BbTq62H28yOZD70U';
-      $chat_id = '-542975461';
-      //Передаем данные боту
-      try {
-        $sendToTelegram = file_get_contents("https://api.telegram.org/bot{$token}/sendMessage?chat_id={$chat_id}&parse_mode=html&text={$tgcontent}");
-      } catch(Exception $e) {
-        //
-      }
-
-
+     
     $lead_id    = sendLead([
       "fields" => [
         "TITLE" => $subject . $lead_id,
@@ -101,6 +55,12 @@ if ($item != '') {
       "ORDER"  => ["ID" => 'DESC'],
       "FILTER" => ['PHONE' => $phone],
       "SELECT" => ['ID'],
+    ], $bitrix24Webhook);
+
+    $deal_id = getDeal([
+      "ORDER"  => ["ID" => 'DESC'],
+      "FILTER" => ['CONTACT_ID' => $contact_id[0]],
+      "SELECT" => ['ID', 'OPPORTUNITY'],
     ], $bitrix24Webhook);
 
 
@@ -200,6 +160,44 @@ if ($phone != '') {
 }
 
 
+$prop_common = CIBlockElement::GetByID($product_id);
+$prop        = null;
+  
+if ($ob = $prop_common->GetNextElement()) {
+  $prop = $ob->GetProperties();
+}
+$param_string = '';
+$sku = '';
+  if (!is_null($prop)) {
+    $sku = $prop['CML2_ARTICLE']['VALUE'];
+  }
+if(isset($prop['CONTAIN']['VALUE'])){
+  $parameters = $prop['CONTAIN']['VALUE'];
+  foreach($parameters as $parameter){
+      $param_string .=  getParameterId($parameter)." / ";
+  }
+}
+
+$width                           = $prop['WIDTH']['NAME'] . ': ' . $prop['WIDTH']['VALUE'];
+$height                          = $prop['HEIGHT']['NAME'] . ': ' . $prop['HEIGHT']['VALUE'];
+$tgcontent_content_item_name     = $products[0]['NAME'];
+$tgcontent_content_item_price    = $products[0]['PRICE'];
+$tgcontent_content_item_currency = $products[0]['CURRENCY_ID'];
+$order                           = 'Новый заказ' . " " . "№" . $deal_id[0]['ID'];
+$tgcontent                       = $order . $delimiter . $item . $delimiter;
+$tgcontent .= "Пользователь:" . $name . $delimiter . 'Номер телефона:' . $phone . $delimiter . $tgcontent_content_item_name . ' ' . '-' . " " . $tgcontent_content_item_price . " " . $tgcontent_content_item_currency . $delimiter;
+$tgcontent .= $delimiter . $width;
+$tgcontent .= $delimiter . $height;
+$tgcontent .= $delimiter . "Цветы в составе:" ." ". $param_string;
+urlencode($tgcontent);
+$token   = '1624880439:AAGDgOb-dqC1dnRThf1BbTq62H28yOZD70U';
+$chat_id = '-542975461';
+//Передаем данные боту
+try {
+  $sendToTelegram = file_get_contents("https://api.telegram.org/bot{$token}/sendMessage?chat_id={$chat_id}&parse_mode=html&text={$tgcontent}");
+} catch(Exception $e) {
+  //
+}
 return null;
 
 function sendLead($params, $bitrix24Webhook)
